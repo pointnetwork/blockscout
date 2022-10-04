@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  redis_db:
+    image: 'redis:alpine'
+    ports:
+      - 6379:6379
+    container_name: redis_db
+    command: redis-server
+    volumes:
+      - ./redis-data:/var/lib/data/redis
+
   db:
     image: postgres:14
     restart: always
@@ -11,22 +20,25 @@ services:
         POSTGRES_HOST_AUTH_METHOD: 'trust'
     ports:
       - 7432:5432
+    volumes:
+      - postgres-data:/var/lib/data/postgres
 
   blockscout:
     depends_on:
       - db
+      - smart-contract-verifier
+      - redis_db
     image: blockscout/blockscout:${DOCKER_TAG:-latest}
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
       args:
-        COIN: ""
         CACHE_EXCHANGE_RATES_PERIOD: ""
         DISABLE_READ_API: "false"
         API_PATH: "/"
         NETWORK_PATH: "/"
         DISABLE_WEBAPP: "false"
-        DISABLE_WRITE_API: "false"
+        DISABLE_WRITE_API: "true"
         CACHE_ENABLE_TOTAL_GAS_USAGE_COUNTER: ""
         CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
         SOCKET_ROOT: "/"
@@ -44,3 +56,17 @@ services:
     ports:
       - 4000:4000
 
+  smart-contract-verifier:
+    image: ghcr.io/blockscout/smart-contract-verifier:${SMART_CONTRACT_VERIFIER_DOCKER_TAG:-latest}
+    restart: always
+    container_name: 'smart-contract-verifier'
+    env_file:
+      -  ./envs/common-smart-contract-verifier.env
+    ports:
+      - 8043:8043
+
+volumes:
+  redis-data:
+    external: true
+  postgres-data:
+    external: true
