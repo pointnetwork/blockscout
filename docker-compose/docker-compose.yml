@@ -26,7 +26,6 @@ services:
   blockscout:
     depends_on:
       - db
-      - smart-contract-verifier
       - redis_db
     image: blockscout/blockscout:${DOCKER_TAG:-latest}
     build:
