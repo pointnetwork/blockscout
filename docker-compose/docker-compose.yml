@@ -45,6 +45,17 @@ services:
         ADMIN_PANEL_ENABLED: ""
     restart: always
     container_name: 'blockscout'
+    environment:
+        DISABLE_WEBAPP: "false"
+        DISABLE_READ_API: "false"
+        DISABLE_WRITE_API: "true"
+        DISABLE_INDEXER: "true"
+        DISABLE_REALTIME_INDEXER: "false"
+        INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "false"
+        INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
+        INDEXER_CATCHUP_BLOCKS_BATCH_SIZE: "50"
+        INDEXER_CATCHUP_BLOCKS_CONCURRENCY: "50"
+
     links:
       - db:database
     command: bash -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
