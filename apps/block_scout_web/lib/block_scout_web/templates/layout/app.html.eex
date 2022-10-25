@@ -41,11 +41,11 @@
       window.localized = {
         'Blocks Indexed': '<%= gettext("Blocks Indexed") %>',
         'Block Processing': '<%= gettext("Block Mined, awaiting import...") %>',
-        'Indexing Tokens': '<%= gettext("Indexing Tokens") %>',
+        'Indexing Internal Transactions': '<%= gettext("Indexing Internal Transactions") %>',
         'Less than': '<%= gettext("Less than") %>',
         'Market Cap': '<%= gettext("Market Cap") %>',
         'Price': '<%= gettext("Price") %>',
-        'Ether': '<%= gettext("Ether") %>',
+        'Ether': '<%= Explorer.coin_name() %>',
         'Tx/day': '<%= gettext("Tx/day") %>'
       }
     </script>
@@ -210,7 +210,7 @@
         <%= nil %>
     <% end %>
     <div class="layout-container">
-      <%= render BlockScoutWeb.LayoutView, "_topnav.html", assigns %>
+      <%= render BlockScoutWeb.LayoutView, "_topnav.html", current_user: Conn.get_session(@conn, :current_user), conn: @conn %>
 
       <main class="js-ad-dependant-pt pt-5">
         <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
